@@ -13,9 +13,9 @@ public class Robot {
 	private Arc robot;	//The "robot" is a semi circle
 	private double distance;	
 	private Timeline action;
-	private double xDisplacment;	
-	private double yDisplacment;
-	private double startAngleDisplacment;
+	private double xDisplacment;		 //These values	
+	private double yDisplacment;		 //are used to 
+	private double startAngleDisplacment;//build the animation
 	public Robot(double centerX, double centerY, double radius, double startAngle, double distance)
 	{
 		//IMPORTANT NOTE start angle should only be 0, 90, 180, or 270, determines direction 
@@ -40,26 +40,52 @@ public class Robot {
 	{	
 		KeyValue kv;
 		KeyFrame kf = null;
-			
-		if(robot.getStartAngle() + startAngleDisplacment == 0) {	//robot is facing top of screen
+		
+		if((robot.getStartAngle() + startAngleDisplacment) < 0)	{	//if angle is negative right/left facing is reverse
+			if(((robot.getStartAngle() + startAngleDisplacment)%360) == 0) {	//robot is facing top of screen
+				kv = new KeyValue(robot.centerYProperty(), robot.getCenterY() - distance + yDisplacment);
+				kf = new KeyFrame(Duration.millis(1000), kv);
+				yDisplacment += -distance;
+			}
+			else if((((robot.getStartAngle() + startAngleDisplacment)%360)%270) == 0) {	//robot is facing left side of screen								//robot is facing right side of screen
+				kv = new KeyValue(robot.centerXProperty(), robot.getCenterX() - distance + xDisplacment);
+				kf = new KeyFrame(Duration.millis(1000), kv);
+				xDisplacment += -distance;
+				
+			}
+			else if((((robot.getStartAngle() + startAngleDisplacment)%360)%180) == 0) {	//robot is facing bottom of screen
+				kv = new KeyValue(robot.centerYProperty(), robot.getCenterY() + distance + yDisplacment);
+				kf = new KeyFrame(Duration.millis(1000), kv);
+				yDisplacment += distance;
+			}
+			else if((((robot.getStartAngle() + startAngleDisplacment)%360)%90) == 0){//robot is facing right side of screen
+				kv = new KeyValue(robot.centerXProperty(), robot.getCenterX() + distance + xDisplacment);
+				kf = new KeyFrame(Duration.millis(1000), kv);
+				xDisplacment += distance;
+			}
+		}
+		else {
+		if(((robot.getStartAngle() + startAngleDisplacment)%360) == 0) {	//robot is facing top of screen
 			kv = new KeyValue(robot.centerYProperty(), robot.getCenterY() - distance + yDisplacment);
 			kf = new KeyFrame(Duration.millis(1000), kv);
 			yDisplacment += -distance;
 		}
-		else if(robot.getStartAngle() + startAngleDisplacment == 90) {	//robot is facing left side of screen
-			kv = new KeyValue(robot.centerXProperty(), robot.getCenterX() - distance + xDisplacment);
+		else if((((robot.getStartAngle() + startAngleDisplacment)%360)%270) == 0) {										//robot is facing right side of screen
+			kv = new KeyValue(robot.centerXProperty(), robot.getCenterX() + distance + xDisplacment);
 			kf = new KeyFrame(Duration.millis(1000), kv);
-			xDisplacment += -distance;
+			xDisplacment += distance;
+			
 		}
-		else if(robot.getStartAngle() + startAngleDisplacment == 180) {	//robot is facing bottom of screen
+		else if((((robot.getStartAngle() + startAngleDisplacment)%360)%180) == 0) {	//robot is facing bottom of screen
 			kv = new KeyValue(robot.centerYProperty(), robot.getCenterY() + distance + yDisplacment);
 			kf = new KeyFrame(Duration.millis(1000), kv);
 			yDisplacment += distance;
 		}
-		else if(robot.getStartAngle() + startAngleDisplacment == 270){									//robot is facing right side of screen
-			kv = new KeyValue(robot.centerXProperty(), robot.getCenterX() + distance + xDisplacment);
+		else if((((robot.getStartAngle() + startAngleDisplacment)%360)%90) == 0){//robot is facing left side of screen
+			kv = new KeyValue(robot.centerXProperty(), robot.getCenterX() - distance + xDisplacment);
 			kf = new KeyFrame(Duration.millis(1000), kv);
-			xDisplacment += distance;
+			xDisplacment += -distance;
+		}
 		}
 		action.getKeyFrames().add(kf);
 		
@@ -73,7 +99,7 @@ public class Robot {
 	}
 	
 	private void turnLeft() 
-	{
+	{	//90 degree turn
 		KeyValue kv = new KeyValue(robot.startAngleProperty(), robot.getStartAngle() + 90 + startAngleDisplacment);
 		KeyFrame kf = new KeyFrame(Duration.millis(1000), kv);
 		startAngleDisplacment += 90;
