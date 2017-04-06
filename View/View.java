@@ -16,7 +16,7 @@ public class View extends Application {
 		try {
 			BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,800,900);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			
