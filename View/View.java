@@ -4,19 +4,36 @@ package View;
 
 
 import java.awt.Point;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 
 public class View extends Application {
 	
 	LinkedList<Point> validPoints = new LinkedList<Point>();
+	ListView<String> list = new ListView<String>();
+	ObservableList<String> items =FXCollections.observableArrayList ();
+	ObservableList<String> actions = FXCollections.observableArrayList(
+			"MoveUp();", "MoveLeft();", "MoveRight();", "MoveDown();");
+	
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -24,8 +41,10 @@ public class View extends Application {
 			BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,800,900);
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
+			Pane maze = new Pane();
 
 			Rectangle r = new Rectangle(25,25,760,500);
 			r.setFill(Color.BLUE);
@@ -111,31 +130,70 @@ public class View extends Application {
 			Point x20 = new Point(2,1);
 			validPoints.add(x20);
 			r20.setFill(Color.RED);
-	
-			root.getChildren().add(r);
-			root.getChildren().add(r1);
-			root.getChildren().add(r2);
-			root.getChildren().add(r3);
-			root.getChildren().add(r4);
-			root.getChildren().add(r5);
-			root.getChildren().add(r6);
-			root.getChildren().add(r7);
-			root.getChildren().add(r8);
-			root.getChildren().add(r9);
-			root.getChildren().add(r10);
-			root.getChildren().add(r11);
-			root.getChildren().add(r12);
-			root.getChildren().add(r13);
-			root.getChildren().add(r14);
-			root.getChildren().add(r15);
-			root.getChildren().add(r16);
-			root.getChildren().add(r17);
-			root.getChildren().add(r18);
-			root.getChildren().add(r19);
-			root.getChildren().add(r20);
+		
+			maze.getChildren().addAll(r, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20);
+			root.setCenter(maze);
 			
+			//This is the pane that will hold the action list
+			BorderPane listing = new BorderPane();
+			list.setItems(items);
+			listing.setCenter(list);
+			Text title = new Text("Action List");
+			listing.setTop(title);
+			
+			//This is the pane that will prompt user to input using a combobox
+			Pane inputPane = new Pane();
+			Label direct = new Label("Input actions from here!");
+			Label robot = new Label("Robot.");
+			final ComboBox<String> comboBox = new ComboBox<String>(actions);
+			Button doAction = new Button("Action!");
+			
+			doAction.setOnMouseClicked((e) ->
+			{
+				String choice = comboBox.getSelectionModel().getSelectedItem();
+				FXCollections.reverse(items);
+				
+				if (choice.equalsIgnoreCase("MoveUp();"))
+				{
+					items.add("Robot.MoveUp();");
+				}
+				else if (choice.equalsIgnoreCase("MoveDown();"))
+				{
+					items.add("Robot.MoveDown();");
+				}
+				else if(choice.equalsIgnoreCase("MoveLeft();"))
+				{
+					items.add("Robot.MoveLeft();");
+				}
+				else if(choice.equalsIgnoreCase("MoveRight();"))
+				{
+					items.add("Robot.MoveRight();");
+				}
+				FXCollections.reverse(items);
+				list.setItems(items);
+			}
+			
+			);
+			
+			BorderPane form = new BorderPane();
+			form.setTop(direct);
+			HBox jiggs = new HBox();
+			jiggs.getChildren().addAll(robot, comboBox);
+			form.setCenter(jiggs);
+			form.setBottom(doAction);
+			inputPane.getChildren().add(form);
+			
+			BorderPane userInput = new BorderPane();
+			userInput.setLeft(inputPane);
+			userInput.setRight(listing);
+			
+			Stage inputStage = new Stage();
+			inputStage.setScene(new Scene(userInput));
+
 			
 			primaryStage.show();
+			inputStage.show();
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
