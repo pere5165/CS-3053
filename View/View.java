@@ -2,13 +2,12 @@
 package application;
 
 import java.awt.Point;
-//import java.util.Collections;
 import java.util.LinkedList;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-//import javafx.geometry.Insets;
+
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,7 +20,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-//import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -29,6 +27,7 @@ import javafx.scene.text.Text;
 
 public class View extends Application {
 	
+
 	static LinkedList<Point> validPoints = new LinkedList<Point>();	//changed to static to call accessor in Robot
 	ListView<String> list = new ListView<String>();
 	ObservableList<String> items =FXCollections.observableArrayList ();
@@ -46,6 +45,7 @@ public class View extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			Pane maze = new Pane();
+
 			
 			Rectangle r = new Rectangle(25,25,760,500);
 			r.setFill(Color.BLUE);
@@ -147,12 +147,15 @@ public class View extends Application {
 			Label direct = new Label("Input actions from here!");
 			Label robot = new Label("Robot.");
 			final ComboBox<String> comboBox = new ComboBox<String>(actions);
-			Button doAction = new Button("Add Action");
+
+			Button doAction = new Button("Add Action")
+
 			
 			doAction.setOnMouseClicked((e) ->
 			{
 				String choice = comboBox.getSelectionModel().getSelectedItem();
-				//FXCollections.reverse(items);
+
+				
 				
 				if (choice.equalsIgnoreCase("MoveForward();"))
 				{
@@ -165,13 +168,31 @@ public class View extends Application {
 				else if(choice.equalsIgnoreCase("TurnRight();"))
 				{
 					items.add("Robot.TurnRight();");
+        }
+				
+				if (choice.equalsIgnoreCase("MoveUp();"))
+				{
+					items.add("Robot.MoveUp();");
+				}
+				else if (choice.equalsIgnoreCase("MoveDown();"))
+				{
+					items.add("Robot.MoveDown();");
+				}
+				else if(choice.equalsIgnoreCase("MoveLeft();"))
+				{
+					items.add("Robot.MoveLeft();");
+				}
+				else if(choice.equalsIgnoreCase("MoveRight();"))
+				{
+					items.add("Robot.MoveRight();");
 				}
 				
-				//FXCollections.reverse(items);
+
 				list.setItems(items);
 			}
 			
 			);
+
 			//button to run list of actions
 			Button go = new Button("Go!");
 			go.setOnMouseClicked(e -> {
@@ -181,9 +202,12 @@ public class View extends Application {
 			BorderPane form = new BorderPane();
 			form.setTop(direct);
 			HBox jiggs = new HBox();
+
 			jiggs.getChildren().addAll(robot, comboBox,doAction);
 			form.setCenter(jiggs);
 			form.setBottom(go);
+
+			
 			inputPane.getChildren().add(form);
 			
 			BorderPane userInput = new BorderPane();
@@ -196,8 +220,7 @@ public class View extends Application {
 			//code for displaying robot here
 			bot = new Robot(75,475,20,0,50);
 			root.getChildren().add(bot.getRobot());
-			
-			
+		
 			primaryStage.show();
 			inputStage.show();
 			
