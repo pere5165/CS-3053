@@ -97,12 +97,13 @@ public class Robot {
 			xDisplacment += -distance;
 		}
 		}
-		if(View.isValidPoint(new Point(newX, newY))) { //there is no wall in the way
+		if(Model.isValidPoint(new Point(newX, newY))) { //there is no wall in the way
 		kf = new KeyFrame(Duration.millis(1000), kv);
 		action.getKeyFrames().add(kf);
 		return true;	
 		}
 		else {	//there is a wall in the way
+			System.out.println("hit");
 			return false;
 		}
 		
