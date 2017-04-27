@@ -166,7 +166,7 @@ public class Robot {
 				View.showIncompleteDialog();
 			}
 			else if(!success) {	//robot ran into a wall
-				View.showHitWallDialog();
+				View.showHitWallDialog(this);
 			}		
 		});
 		
