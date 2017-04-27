@@ -14,6 +14,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -53,10 +56,30 @@ public class View
 			Scene scene = new Scene(root,800,700);
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
+			//Menu bar
+			MenuBar menu = new MenuBar();
+			menu.prefWidthProperty().bind(primaryStage.widthProperty());
+
+		    
+		    Menu file = new Menu("File");
+		    MenuItem exit = new Menu("Exit");
+		    
+		    Menu game = new Menu("Game");
+		    MenuItem save = new MenuItem("Save");
+		    MenuItem reload = new MenuItem("Reload");
+		    MenuItem clear = new MenuItem("Clear");
+		    MenuItem restart = new MenuItem("Restart");
+		    
+		    file.getItems().addAll(exit);
+		    game.getItems().addAll(save, reload, clear, restart);
+		    
+		    menu.getMenus().addAll(file, game);
+
+			
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			Pane maze = new Pane();
-
+			
 			//generate random Maze
 			generateMaze(maze);
 			root.setTop(maze);
@@ -121,7 +144,7 @@ public class View
 			bottom.setCenter(userInput);
 			bottom.setTop(inputPane);
 			
-			
+			maze.getChildren().add(menu);
 			
 			//code for displaying robot here
 			bot = new Robot(75,475,20,0,50);
