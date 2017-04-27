@@ -76,4 +76,11 @@ public class Controller
 		model.setChoiceString(selectedItem);
 		
 	}
+
+
+	public void clearItemsList() {
+		// TODO Auto-generated method stub
+		model.items.clear();
+		model.update();
+	}
 }
