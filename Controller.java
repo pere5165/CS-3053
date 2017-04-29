@@ -45,25 +45,25 @@ public class Controller
 			{
 				model.items.add("Robot.TurnRight();");
 			}
-			
-			if (model.choice.equalsIgnoreCase("MoveUp();"))
-			{
-				model.items.add("Robot.MoveUp();");
+			else if(model.getChoiceString().equalsIgnoreCase("while(notAtGoal()){")) {
+				model.items.add("while(notAtGoal()){");
 			}
-			else if (model.choice.equalsIgnoreCase("MoveDown();"))
-			{
-				model.items.add("Robot.MoveDown();");
+			else if(model.getChoiceString().equalsIgnoreCase("}endwhile")) {
+				model.items.add("}endwhile");
 			}
-			else if(model.choice.equalsIgnoreCase("MoveLeft();"))
-			{
-				model.items.add("Robot.MoveLeft();");
+			else if(model.getChoiceString().equalsIgnoreCase("if(pathForward()){")) {
+				model.items.add("if(pathForward()){");
 			}
-			else if(model.choice.equalsIgnoreCase("MoveRight();"))
-			{
-				model.items.add("Robot.MoveRight();");
+			else if(model.getChoiceString().equalsIgnoreCase("if(pathLeft()){")) {
+				model.items.add("if(pathLeft()){");
 			}
-			
-	
+			else if(model.getChoiceString().equalsIgnoreCase("if(pathRight()){")) {
+				model.items.add("if(pathRight()){");
+			}
+			else if(model.getChoiceString().equalsIgnoreCase("}endif")) {
+				model.items.add("}endif");
+			}
+				
 			model.update();
 			
 		}

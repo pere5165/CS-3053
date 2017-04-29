@@ -33,7 +33,8 @@ public class View
 	ListView<String> list = new ListView<String>();
 	ObservableList<String> items =FXCollections.observableArrayList ();
 	ObservableList<String> actions = FXCollections.observableArrayList(
-			"MoveForward();", "TurnLeft();", "TurnRight();");
+			"MoveForward();", "TurnLeft();", "TurnRight();", "while(notAtGoal()){", "}endwhile",
+			"if(pathLeft()){", "if(pathRight()){", "if(pathForward()){", "}endif");
 	Robot bot = new Robot(75,475,20,0,50);
 	
 	
@@ -166,8 +167,9 @@ public class View
 		winDialog.show();
 	}
 	
-	public static void showIncompleteDialog() {	//display when robot is not at the goal when animation is finished
+	public static void showIncompleteDialog(Robot bot) {	//display when robot is not at the goal when animation is finished
 		
+		bot.setLocation(75,475);
 		
 		Dialog<String> winDialog = new Dialog<>();
 		winDialog.setContentText("Almost There!");
@@ -177,7 +179,7 @@ public class View
 	public static void showHitWallDialog(Robot bot) {	//display when robot hits a wall
 
 		bot.setLocation(75,475);
-		usedController.clearItemsList();
+		//usedController.clearItemsList();
 		
 		Dialog<String> winDialog = new Dialog<>();
 		winDialog.setContentText("Oops You Hit A Wall!");
@@ -187,6 +189,16 @@ public class View
            
 	}
 
+	public static void showInfiniteDialog(Robot bot) {
+		
+		bot.setLocation(75,475);
+		
+		Dialog<String> winDialog = new Dialog<>();
+		winDialog.setContentText("Infinite Loop! That would take too long!");
+		winDialog.getDialogPane().getButtonTypes().add(new ButtonType("Try Again", ButtonData.CANCEL_CLOSE));
+		winDialog.show();
+		
+	}
 	public void setVisible(Stage primaryStage) {
 		// TODO Auto-generated method stub
 		
@@ -260,5 +272,7 @@ public class View
 		list.setItems(items);
 		
 	}
+
+	
 		
 }
