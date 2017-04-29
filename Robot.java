@@ -109,10 +109,6 @@ public class Robot {
 		
 	}
 	
-	
-	
-	
-	
 	private void turnRight() 
 	{	//90 degree turn
 		KeyValue kv = new KeyValue(robot.startAngleProperty(), robot.getStartAngle() - 90 + startAngleDisplacment);
@@ -137,11 +133,14 @@ public class Robot {
 		yDisplacment = 0;
 		startAngleDisplacment = 0;
 		success = true;
+		
 		SequentialTransition path = new SequentialTransition();
-		for(String i : commands) 
+		
+		int loopStart = -1;
+		for(int i = 0; i < commands.size(); i++) 
 		{
 			action = new Timeline();
-			switch (i) {
+			switch (commands.get(i)) {
 			case "Robot.MoveForward();":
 				success = forward();
 				break;
@@ -151,26 +150,59 @@ public class Robot {
 			case "Robot.TurnRight();":
 				turnRight();
 				break;
+			case "while(notAtGoal()){":
+				loopStart = i;
+				break;
+			case "}endwhile":
+				if(!isAtGoal()) {
+					i = loopStart;	//go to first command in loop
+				}
+				break;
+			case "if(pathForward()){":
+				if(!hasPath("front")) {
+					while(!commands.get(i).equals("}endif")) i++;	//skip commands inside  the if					
+				}
+				break;
+			case "if(pathLeft()){":
+				if(!hasPath("left")) {
+					while(!commands.get(i).equals("}endif")) i++;	//skip commands inside  the if					
+				}
+				break;
+			case "if(pathRight()){":
+				if(!hasPath("right")) {
+					while(!commands.get(i).equals("}endif")) i++;	//skip commands inside  the if					
+				}
+				break;
+				
 			}
 			if(!success) break;	//if there is a wall in the way
 			path.getChildren().add(action);
+			if(path.getChildren().size() > 1000) break;	//probably an infinite loop
 		}
+		
+		if(path.getChildren().size() > 1000) {	//probably an infinite loop
+			View.showInfiniteDialog(this);
+			return false;
+		}		
+		
 		path.setOnFinished(e -> { //.play() is an asynchronous call, this is needed to display success/failure after animation finishes
 			if(new Point((int)robot.getCenterX(),	//robot is on the goal at end of animation
-					(int)robot.getCenterY()).equals(new Point(525, 375))) {	
+					(int)robot.getCenterY()).equals(Model.validPoints.getLast())) {	
 				//IMPORTANT NOTE: need way to get goal location from view
 			View.showWinDialog();
 			}
 			else if(success && !(new Point((int)robot.getCenterX(),	//robot did not run into any walls but is NOT on the goal
-					(int)robot.getCenterY()).equals(new Point(525, 375)))) {
-				View.showIncompleteDialog();
+					(int)robot.getCenterY()).equals(Model.validPoints.getLast()))) {
+				View.showIncompleteDialog(this);
 			}
 			else if(!success) {	//robot ran into a wall
 				View.showHitWallDialog(this);
-			}		
+			}
+			
 		});
 		
 		path.play();
+		if(path.getChildren().size() > 10000) path.stop();	//infinite loop
 		return success;
 	}
 	
@@ -181,6 +213,114 @@ public class Robot {
 	}
 	public Point getLocation() {
 		return new Point((int)robot.getCenterX(), (int)robot.getCenterY());
+	}
+	public boolean isAtGoal() {
+		return getLocation().equals(Model.validPoints.getLast());
+	}
+	public boolean hasPath(String direction) {	//check if there is a valid point to the "left", "right" or "front"  of the robot
+		
+		int newX = (int)(robot.getCenterX() + xDisplacment);
+		int newY = (int)(robot.getCenterY() + yDisplacment);
+		
+		if((robot.getStartAngle() + startAngleDisplacment) < 0)	{	//if angle is negative right/left facing is reverse
+			if(((robot.getStartAngle() + startAngleDisplacment)%360) == 0) {	//robot is facing top of screen			
+				if(direction.equalsIgnoreCase("front")) {
+					newY = (int)(robot.getCenterY() - distance + yDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("left")) {
+					newX = (int)(robot.getCenterX() - distance + xDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("right")) {
+					newX = (int)(robot.getCenterX() + distance + xDisplacment);
+				}
+			}
+			else if((((robot.getStartAngle() + startAngleDisplacment)%360)%270) == 0) {	//robot is facing left side of screen								
+				if(direction.equalsIgnoreCase("front")) {
+					newX = (int)(robot.getCenterX() - distance + xDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("left")) {
+					newY = (int)(robot.getCenterY() + distance + yDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("right")) {
+					newY = (int)(robot.getCenterY() - distance + yDisplacment);
+				}
+			}
+			else if((((robot.getStartAngle() + startAngleDisplacment)%360)%180) == 0) {	//robot is facing bottom of screen
+				if(direction.equalsIgnoreCase("front")) {
+					newY = (int)(robot.getCenterY() + distance + yDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("left")) {
+					newX = (int)(robot.getCenterX() - distance + xDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("right")) {
+					newX = (int)(robot.getCenterX() + distance + xDisplacment);
+				}
+			}
+			else if((((robot.getStartAngle() + startAngleDisplacment)%360)%90) == 0){//robot is facing right side of screen
+				if(direction.equalsIgnoreCase("front")) {
+					newX = (int)(robot.getCenterX() + distance + xDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("left")) {
+					newY = (int)(robot.getCenterY() - distance + yDisplacment);
+				}
+				else if(direction.equalsIgnoreCase("right")) {
+					newY = (int)(robot.getCenterY() + distance + yDisplacment);
+				}
+			}
+		}
+		else {
+		if(((robot.getStartAngle() + startAngleDisplacment)%360) == 0) {	//robot is facing top of screen
+			if(direction.equalsIgnoreCase("front")) {
+				newY = (int)(robot.getCenterY() - distance + yDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("left")) {
+				newX = (int)(robot.getCenterX() - distance + xDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("right")) {
+				newX = (int)(robot.getCenterX() + distance + xDisplacment);
+			}
+		}
+		else if((((robot.getStartAngle() + startAngleDisplacment)%360)%270) == 0) {	//robot is facing right side of screen
+			if(direction.equalsIgnoreCase("front")) {
+				newX = (int)(robot.getCenterX() + distance + xDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("left")) {
+				newY = (int)(robot.getCenterY() - distance + yDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("right")) {
+				newY = (int)(robot.getCenterY() + distance + yDisplacment);
+			}	
+		}
+		else if((((robot.getStartAngle() + startAngleDisplacment)%360)%180) == 0) {	//robot is facing bottom of screen
+			if(direction.equalsIgnoreCase("front")) {
+				newY = (int)(robot.getCenterY() + distance + yDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("left")) {
+				newX = (int)(robot.getCenterX() - distance + xDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("right")) {
+				newX = (int)(robot.getCenterX() + distance + xDisplacment);
+			}
+		}
+		else if((((robot.getStartAngle() + startAngleDisplacment)%360)%90) == 0){//robot is facing left side of screen
+			if(direction.equalsIgnoreCase("front")) {
+				newX = (int)(robot.getCenterX() - distance + xDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("left")) {
+				newY = (int)(robot.getCenterY() + distance + yDisplacment);
+			}
+			else if(direction.equalsIgnoreCase("right")) {
+				newY = (int)(robot.getCenterY() - distance + yDisplacment);
+			}
+		}
+		}
+		
+		if(Model.isValidPoint(new Point(newX, newY))) { //there is no wall in the way
+			return true;	
+			}
+			else {	//there is a wall in the way
+				return false;
+			}
 	}
 	
 }
