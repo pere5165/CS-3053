@@ -189,7 +189,7 @@ public class Robot {
 			if(new Point((int)robot.getCenterX(),	//robot is on the goal at end of animation
 					(int)robot.getCenterY()).equals(Model.validPoints.getLast())) {	
 				//IMPORTANT NOTE: need way to get goal location from view
-			View.showWinDialog();
+			View.showWinDialog(this);
 			}
 			else if(success && !(new Point((int)robot.getCenterX(),	//robot did not run into any walls but is NOT on the goal
 					(int)robot.getCenterY()).equals(Model.validPoints.getLast()))) {
