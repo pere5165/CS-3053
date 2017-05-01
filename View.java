@@ -3,8 +3,13 @@ package application;
 import java.awt.Point;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -40,6 +45,10 @@ public class View
 	
 	private Model model;
 	private static Controller usedController;
+	private static Button New;
+	private static int count;
+	private static Label myLabel;
+	private static StringProperty value = new SimpleStringProperty("Level 1");
 	
 	public View(Model model, Controller c, Stage primaryStage) {
 		model.addListener( this );
@@ -52,7 +61,7 @@ public class View
 	
 	private void init(Stage primaryStage )
 	{
-	
+			count = 1;
 			BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,800,700);
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -60,22 +69,22 @@ public class View
 			//Menu bar
 			MenuBar menu = new MenuBar();
 			menu.prefWidthProperty().bind(primaryStage.widthProperty());
-
+			
+			myLabel = new Label("Level " + count);
+			myLabel.textProperty().bind(value);
 		    
 		    Menu file = new Menu("File");
 		    MenuItem exit = new Menu("Exit");
 		    
 		    Menu game = new Menu("Game");
 		    MenuItem save = new MenuItem("Save");
-		    MenuItem reload = new MenuItem("Reload");
-		    MenuItem clear = new MenuItem("Clear");
-		    MenuItem restart = new MenuItem("Restart");
+		    MenuItem reload = new MenuItem("Reload New");
+		    MenuItem clear = new MenuItem("Clear List");
 		    
 		    file.getItems().addAll(exit);
-		    game.getItems().addAll(save, reload, clear, restart);
+		    game.getItems().addAll(save, reload, clear);
 		    
 		    menu.getMenus().addAll(file, game);
-
 			
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
@@ -97,14 +106,11 @@ public class View
 			Label direct = new Label("Input actions from here!");
 			Label robot = new Label("Robot.");
 			final ComboBox<String> comboBox = new ComboBox<String>(actions);
-
 			Button doAction = new Button("Add Action");
-
 			//set both combobox and and doaction button on action
 			usedController.setChoiceString(comboBox.getSelectionModel().getSelectedItem());
 			comboBox.setOnAction(usedController);
 			doAction.setOnMouseClicked(usedController);
-
 			
 			
 			
@@ -114,6 +120,28 @@ public class View
 				bot.execute(items);	
 			});
 			
+			//Button created to go to next level when chosen
+			New = new Button("Next Level");
+			New.setOnMouseClicked(e -> {
+				generateMaze(maze);
+				New.setDisable(true);
+			});
+			New.setDisable(true);
+			
+			//Action listener for the reload option on menuBar
+			reload.setOnAction(new EventHandler<ActionEvent>() {
+		        public void handle(ActionEvent t) {
+		        	generateMaze(maze);
+		        }
+		   });
+			
+			//Action listener for the clear option on menuBar
+			clear.setOnAction(new EventHandler<ActionEvent>() {
+		        public void handle(ActionEvent t) {
+		        	usedController.clearItemsList();
+		        }
+		   });
+			
 			//Clear List Button
 			Button listClearBtn = new Button("Clear Actions!");
 			listClearBtn.setOnMouseClicked(e -> {
@@ -121,18 +149,15 @@ public class View
 			});
 			
 			HBox commandButtons = new HBox();		   
-		    commandButtons.getChildren().addAll(go, listClearBtn);
+		    commandButtons.getChildren().addAll(go, listClearBtn, New, myLabel);
 			
 		
 			BorderPane form = new BorderPane();
 			form.setTop(direct);
 			HBox jiggs = new HBox();
-
 			jiggs.getChildren().addAll(robot, comboBox,doAction);
 			form.setCenter(jiggs);
 			form.setBottom(commandButtons);
-
-
 			
 			inputPane.getChildren().add(form);
 			
@@ -158,10 +183,13 @@ public class View
 			
 		
 	}
-
 	
-	public static void showWinDialog() {	//display when robot arrives at the goal
+	public static void showWinDialog(Robot bot) {	//display when robot arrives at the goal
+		bot.setLocation(75,475);
+		count++;
+		value.set("Level " + count);
 		Dialog<String> winDialog = new Dialog<>();
+		New.setDisable(false);
 		winDialog.setContentText("Level Complete!");
 		winDialog.getDialogPane().getButtonTypes().add(new ButtonType("Continue", ButtonData.CANCEL_CLOSE));
 		winDialog.show();
@@ -177,7 +205,6 @@ public class View
 		winDialog.show();
 	}
 	public static void showHitWallDialog(Robot bot) {	//display when robot hits a wall
-
 		bot.setLocation(75,475);
 		//usedController.clearItemsList();
 		
@@ -188,7 +215,6 @@ public class View
 		
            
 	}
-
 	public static void showInfiniteDialog(Robot bot) {
 		
 		bot.setLocation(75,475);
@@ -214,7 +240,7 @@ public class View
 		
 		
 		//Random Maze Generator
-		Rectangle rbase = new Rectangle(25,25,760,500);
+		Rectangle rbase = new Rectangle(0,25,810,550);
 		rbase.setFill(Color.BLUE);
 		
 		maze.getChildren().add(rbase);
@@ -224,11 +250,12 @@ public class View
 			
 			if (randomNum1 == 3 || randomNum1 == 4 || randomNum1 == 5){
 				int randomNum2 = ThreadLocalRandom.current().nextInt(1, 20 + 1);
-				if (randomNum2 == 2 ){
+				
+				if (randomNum2 == 2 && xCoord > 50){
 					xCoord = xCoord - 50;
 					xPoint = xPoint - 50;
 				}
-				else {
+				else if(xCoord < 750){
 					xCoord = xCoord + 50;
 					xPoint = xPoint + 50;
 				}
@@ -236,11 +263,12 @@ public class View
 			
 			if (randomNum1 == 1 || randomNum1 == 2 ){
 				int randomNum2 = ThreadLocalRandom.current().nextInt(1, 20 + 1);
-				if (randomNum2 == 2 ){
+				
+				if (randomNum2 == 2 && yCoord < 500 ){
 					yCoord = yCoord + 50;
 					yPoint = yPoint + 50;
 				}
-				else {
+				else if(yCoord > 50){
 					yCoord = yCoord - 50;
 					yPoint = yPoint - 50;
 				}
@@ -264,7 +292,6 @@ public class View
 		rEnd.setFill(Color.RED);
 		maze.getChildren().addAll(r1,rEnd);
 	}
-
 	@Override
 	public void updated() {
 		// TODO Auto-generated method stub
@@ -272,7 +299,6 @@ public class View
 		list.setItems(items);
 		
 	}
-
 	
 		
 }
