@@ -103,7 +103,7 @@ public class Robot {
 		return true;	
 		}
 		else {	//there is a wall in the way
-			System.out.println("hit");
+			
 			return false;
 		}
 		
@@ -180,10 +180,10 @@ public class Robot {
 			if(path.getChildren().size() > 1000) break;	//probably an infinite loop
 		}
 		
-		if(path.getChildren().size() > 1000) {	//probably an infinite loop
-			View.showInfiniteDialog(this);
-			return false;
-		}		
+		//if(path.getChildren().size() > 1000) {	//probably an infinite loop
+		//	View.showInfiniteDialog(this);
+		//	return false;
+		//}		
 		
 		path.setOnFinished(e -> { //.play() is an asynchronous call, this is needed to display success/failure after animation finishes
 			if(new Point((int)robot.getCenterX(),	//robot is on the goal at end of animation
@@ -202,7 +202,8 @@ public class Robot {
 		});
 		
 		path.play();
-		if(path.getChildren().size() > 10000) path.stop();	//infinite loop
+		//if(path.getChildren().size() > 1000) path.stop(); //infinite loop
+			
 		return success;
 	}
 	
