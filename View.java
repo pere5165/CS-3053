@@ -82,7 +82,7 @@ public class View
 		    MenuItem clear = new MenuItem("Clear List");
 		    
 		    file.getItems().addAll(exit);
-		    game.getItems().addAll(save, reload, clear);
+		    game.getItems().addAll(reload, clear);
 		    
 		    menu.getMenus().addAll(file, game);
 			
@@ -132,6 +132,14 @@ public class View
 			reload.setOnAction(new EventHandler<ActionEvent>() {
 		        public void handle(ActionEvent t) {
 		        	generateMaze(maze);
+		        }
+		   });
+			
+			
+			//Action listener for the exit option on menuBar
+			exit.setOnAction(new EventHandler<ActionEvent>() {
+		        public void handle(ActionEvent t) {
+		        	System.exit(0);
 		        }
 		   });
 			
@@ -231,6 +239,8 @@ public class View
 	}
 	
 	public void generateMaze(Pane maze) {
+		
+		usedController.clearValidPoints();
 		// TODO Auto-generated method stub
 		int xCoord = 50;
 		int yCoord = 450;
@@ -246,6 +256,7 @@ public class View
 		maze.getChildren().add(rbase);
 		
 		for (int count = 0; count < 20; count++){
+			
 			int randomNum1 = ThreadLocalRandom.current().nextInt(1, 7 + 1);
 			
 			if (randomNum1 == 3 || randomNum1 == 4 || randomNum1 == 5){
