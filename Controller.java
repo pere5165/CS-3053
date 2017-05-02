@@ -21,6 +21,9 @@ public class Controller
 	}
 
 
+	public void clearValidPoints(){
+		model.validPoints.clear();
+	}
 
 	@Override
 	public void handle(Event arg0) {
