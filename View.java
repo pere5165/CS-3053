@@ -5,11 +5,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,6 +22,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -61,10 +62,11 @@ public class View
 	
 	private void init(Stage primaryStage )
 	{
+		
 			count = 1;
 			BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,800,700);
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setTitle("Robo Maze");
 			
 			//Menu bar
 			MenuBar menu = new MenuBar();
@@ -77,7 +79,6 @@ public class View
 		    MenuItem exit = new Menu("Exit");
 		    
 		    Menu game = new Menu("Game");
-		    MenuItem save = new MenuItem("Save");
 		    MenuItem reload = new MenuItem("Reload New");
 		    MenuItem clear = new MenuItem("Clear List");
 		    
@@ -96,6 +97,7 @@ public class View
 			
 			//This is the pane that will hold the action list
 			BorderPane listing = new BorderPane();
+			listing.setPadding(new Insets(10, 20, 10, 20));
 			list.setItems(items);
 			listing.setCenter(list);
 			Text title = new Text("Action List");
@@ -112,10 +114,13 @@ public class View
 			comboBox.setOnAction(usedController);
 			doAction.setOnMouseClicked(usedController);
 			
+			Tooltip x = new Tooltip("Select Command for Robot to Perform");
+			comboBox.setTooltip(x);
+			
 			
 			
 			//button to run list of actions
-			Button go = new Button("Go!");
+			Button go = new Button("Go");
 			go.setOnMouseClicked(e -> {
 				bot.execute(items);	
 			});
@@ -136,6 +141,7 @@ public class View
 		   });
 			
 			
+			
 			//Action listener for the exit option on menuBar
 			exit.setOnAction(new EventHandler<ActionEvent>() {
 		        public void handle(ActionEvent t) {
@@ -151,18 +157,29 @@ public class View
 		   });
 			
 			//Clear List Button
-			Button listClearBtn = new Button("Clear Actions!");
+			Button listClearBtn = new Button("Clear Actions");
 			listClearBtn.setOnMouseClicked(e -> {
 				usedController.clearItemsList();	
 			});
 			
 			HBox commandButtons = new HBox();		   
 		    commandButtons.getChildren().addAll(go, listClearBtn, New, myLabel);
-			
+		    commandButtons.setStyle("-fx-padding: 5;" + 
+	                "-fx-border-style: solid inside;" + 
+	                "-fx-background-color: #f0ffff;" +
+		    		"-fx-spacing: 5;" 
+	               );  
 		
 			BorderPane form = new BorderPane();
+			form.setPadding(new Insets(10, 20, 10, 20));
 			form.setTop(direct);
 			HBox jiggs = new HBox();
+   
+		    jiggs.setStyle("-fx-padding: 1;" + 
+	                "-fx-border-style: solid inside;" + 
+	                "-fx-background-color: #f8f8ff;" +
+		    		"-fx-spacing: 1;");
+			
 			jiggs.getChildren().addAll(robot, comboBox,doAction);
 			form.setCenter(jiggs);
 			form.setBottom(commandButtons);
@@ -170,6 +187,7 @@ public class View
 			inputPane.getChildren().add(form);
 			
 			BorderPane userInput = new BorderPane();
+			userInput.setPadding(new Insets(10, 20, 10, 20));
 			userInput.setLeft(inputPane);
 			userInput.setCenter(listing);
 			
@@ -214,7 +232,6 @@ public class View
 	}
 	public static void showHitWallDialog(Robot bot) {	//display when robot hits a wall
 		bot.setLocation(75,475);
-		//usedController.clearItemsList();
 		
 		Dialog<String> winDialog = new Dialog<>();
 		winDialog.setContentText("Oops You Hit A Wall!");
