@@ -5,9 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,7 +23,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.TooltipBuilder;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -66,18 +63,10 @@ public class View
 	private void init(Stage primaryStage )
 	{
 		
-			//Ovservable list hover 
-		
-		
-		
-		
-		
-		
 			count = 1;
 			BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,800,700);
 			primaryStage.setTitle("Robo Maze");
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
 			//Menu bar
 			MenuBar menu = new MenuBar();
@@ -90,7 +79,6 @@ public class View
 		    MenuItem exit = new Menu("Exit");
 		    
 		    Menu game = new Menu("Game");
-		   // MenuItem help = new MenuItem("Help");
 		    MenuItem reload = new MenuItem("Reload New");
 		    MenuItem clear = new MenuItem("Clear List");
 		    
@@ -244,7 +232,6 @@ public class View
 	}
 	public static void showHitWallDialog(Robot bot) {	//display when robot hits a wall
 		bot.setLocation(75,475);
-		//usedController.clearItemsList();
 		
 		Dialog<String> winDialog = new Dialog<>();
 		winDialog.setContentText("Oops You Hit A Wall!");
